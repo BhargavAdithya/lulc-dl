@@ -1,0 +1,34 @@
+# ── Model file ───────────────────────────────
+*.h5
+*.keras
+
+# ── Python ───────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+venv/
+.env
+*.egg-info/
+
+# ── Node / Next.js ────────────────────────────
+node_modules/
+.next/
+.env.local
+.env
+
+# ── Uploads / temp ───────────────────────────
+backend/uploads/
+*.tif
+*.tiff
+
+# ── OS files ─────────────────────────────────
+desktop.ini
+.DS_Store
+Thumbs.db
+
+# ── Logs ─────────────────────────────────────
+*.log
+npm-debug.log*
+
+# ── HuggingFace cache ─────────────────────────
+.cache/
