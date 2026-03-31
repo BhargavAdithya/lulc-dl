@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 
 const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000';
 
@@ -28,21 +28,48 @@ const TABS = [
 
 type TabKey = typeof TABS[number]['key'];
 
+const STEPS = [
+  { id: 1, label: 'Preprocessing bands',        duration: 6000  },
+  { id: 2, label: 'Sliding window prediction',  duration: 10000 },
+  { id: 3, label: 'Generating outputs',         duration: 4000  },
+];
+
 function downloadImage(b64: string, filename: string) {
-  const link  = document.createElement('a');
-  link.href   = `data:image/png;base64,${b64}`;
+  const link    = document.createElement('a');
+  link.href     = `data:image/png;base64,${b64}`;
   link.download = filename;
   link.click();
 }
 
 export default function Home() {
-  const [file,      setFile]      = useState<File | null>(null);
-  const [result,    setResult]    = useState<PredictionResult | null>(null);
-  const [loading,   setLoading]   = useState(false);
-  const [error,     setError]     = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<TabKey>('segmentation_mask');
-  const [drag,      setDrag]      = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [file,        setFile]        = useState<File | null>(null);
+  const [result,      setResult]      = useState<PredictionResult | null>(null);
+  const [loading,     setLoading]     = useState(false);
+  const [error,       setError]       = useState<string | null>(null);
+  const [activeTab,   setActiveTab]   = useState<TabKey>('segmentation_mask');
+  const [drag,        setDrag]        = useState(false);
+  const [activeStep,  setActiveStep]  = useState(0);   // 0 = none, 1/2/3 = step index
+  const inputRef   = useRef<HTMLInputElement>(null);
+  const stepTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  // Clear timers on unmount
+  useEffect(() => () => stepTimers.current.forEach(clearTimeout), []);
+
+  const startStepAnimation = () => {
+    setActiveStep(1);
+    let elapsed = 0;
+    STEPS.forEach((step, i) => {
+      const t = setTimeout(() => setActiveStep(i + 1), elapsed);
+      stepTimers.current.push(t);
+      elapsed += step.duration;
+    });
+  };
+
+  const stopStepAnimation = () => {
+    stepTimers.current.forEach(clearTimeout);
+    stepTimers.current = [];
+    setActiveStep(0);
+  };
 
   const handleFile = useCallback((f: File) => {
     if (!f.name.toLowerCase().endsWith('.tif')) {
@@ -71,6 +98,7 @@ export default function Home() {
     setLoading(true);
     setError(null);
     setResult(null);
+    startStepAnimation();
 
     try {
       const form = new FormData();
@@ -87,9 +115,11 @@ export default function Home() {
       }
 
       const data: PredictionResult = await res.json();
+      stopStepAnimation();
       setResult(data);
       setActiveTab('segmentation_mask');
     } catch (e: unknown) {
+      stopStepAnimation();
       setError(e instanceof Error ? e.message : 'Something went wrong');
     } finally {
       setLoading(false);
@@ -97,16 +127,34 @@ export default function Home() {
   };
 
   return (
+    <>
     <main className="root">
 
       {/* ── Header ── */}
       <header className="header">
         <div className="header-inner">
-          <div className="logo-mark">🛰️</div>
-          <div>
-            <h1 className="site-title">LandCover<span className="accent">AI</span></h1>
-            <p className="site-sub">Sentinel-2 Land Use Classification</p>
+
+          {/* Left logos */}
+          <div className="header-logos">
+            <img src="https://iittnif.com/images/logos/IITT_InIf_svg2-01.png" alt="IITT NIF" className="header-logo" />
+            <img src="https://cse.iittp.ac.in/assets/images/iittp-logo.png"    alt="IIT Tirupati" className="header-logo" />
           </div>
+
+          {/* Centre title */}
+          <div className="header-center">
+            <div className="logo-mark">🛰️</div>
+            <div>
+              <h1 className="site-title">LandCover<span className="accent">AI</span></h1>
+              <p className="site-sub">Sentinel-2 Land Use Classification</p>
+            </div>
+          </div>
+
+          {/* Right logos */}
+          <div className="header-logos">
+            <img src="https://d35xcwcl37xo08.cloudfront.net/current-affairs-wp-uploads/2025/03/national_mission_in_interdisciplinary_cyber_physical_systems_nm_icps-scaled.jpg" alt="NM-ICPS"      className="header-logo" />
+            <img src="https://results.siddhartha.edu.in/SAHE-Logo-01-results.jpg"                                                                                           alt="Siddhartha" className="header-logo" />
+          </div>
+
         </div>
       </header>
 
@@ -169,9 +217,29 @@ export default function Home() {
             )}
           </button>
 
+          {/* ── Sequential Steps ── */}
           {loading && (
-            <div className="progress-hint">
-              Preprocessing bands → sliding window inference → generating outputs…
+            <div className="steps-container">
+              {STEPS.map((step, i) => {
+                const stepNum  = i + 1;
+                const isDone   = activeStep > stepNum;
+                const isActive = activeStep === stepNum;
+                return (
+                  <div
+                    key={step.id}
+                    className={`step-row ${isActive ? 'active' : ''} ${isDone ? 'done' : ''}`}
+                  >
+                    <div className="step-icon">
+                      {isDone
+                        ? '✅'
+                        : isActive
+                          ? <span className="step-spinner" />
+                          : <span className="step-dot" />}
+                    </div>
+                    <span className="step-label">{step.label}</span>
+                  </div>
+                );
+              })}
             </div>
           )}
         </section>
@@ -224,7 +292,7 @@ export default function Home() {
               ))}
             </div>
 
-            {/* Image */}
+            {/* Image + download only for active tab */}
             <div className="image-panel">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -234,24 +302,15 @@ export default function Home() {
               />
               <button
                 className="download-btn"
-                onClick={() => downloadImage(result[activeTab], `${activeTab}.png`)}
+                onClick={() => downloadImage(
+                  result[activeTab],
+                  `${activeTab}.png`
+                )}
               >
                 ⬇ Download {TABS.find(t => t.key === activeTab)?.label}
               </button>
             </div>
 
-            {/* Download all */}
-            <div className="download-all-row">
-              {TABS.map(t => (
-                <button
-                  key={t.key}
-                  className="download-all-btn"
-                  onClick={() => downloadImage(result[t.key], `${t.key}.png`)}
-                >
-                  ⬇ {t.label}
-                </button>
-              ))}
-            </div>
           </section>
         )}
       </div>
@@ -274,5 +333,12 @@ export default function Home() {
       </aside>
 
     </main>
+
+    {/* ── Footer ── */}
+    <footer className="footer">
+      <p className="footer-heart">Made with <span className="heart">❤️</span> for geospatial analysis</p>
+      <p className="footer-powered">Powered by <span className="footer-brand">Geointell Labs</span> · <span className="footer-sub">STAR-PNT Labs</span></p>
+    </footer>
+    </>
   );
 }

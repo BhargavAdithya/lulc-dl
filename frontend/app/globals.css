@@ -31,15 +31,53 @@ body {
 /* ── Header ── */
 .header {
   border-bottom: 1px solid var(--border);
-  background: rgba(10,14,20,.85);
+  background: rgba(10,14,20,.92);
   backdrop-filter: blur(12px);
   position: sticky; top: 0; z-index: 50;
 }
+
 .header-inner {
-  max-width: 1200px; margin: 0 auto;
-  padding: 18px 24px;
-  display: flex; align-items: center; gap: 16px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
 }
+
+/* Logo groups on left and right */
+.header-logos {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.header-logo {
+  height: 52px;
+  width: auto;
+  object-fit: contain;
+  filter: brightness(1.05);
+  transition: transform 0.2s;
+  background: white;
+  border-radius: 6px;
+  padding: 4px 6px;
+}
+
+.header-logo:hover {
+  transform: scale(1.05);
+}
+
+/* Centre: satellite icon + title */
+.header-center {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  justify-content: center;
+}
+
 .logo-mark {
   width: 48px; height: 48px;
   background: linear-gradient(135deg, #0050a0, #00e5ff22);
@@ -47,13 +85,56 @@ body {
   border-radius: 10px;
   display: grid; place-items: center;
   font-size: 22px;
+  flex-shrink: 0;
 }
+
 .site-title {
   font-family: 'Space Mono', monospace;
   font-size: 22px; font-weight: 700; letter-spacing: -.5px;
 }
+
 .accent   { color: var(--accent); }
 .site-sub { font-size: 12px; color: var(--text-dim); letter-spacing: .5px; }
+
+/* ── Download button spacing fix ── */
+.image-panel {
+  background: var(--surface2);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+
+.download-btn {
+  width: 100%;
+  padding: 14px;
+  text-align: center;
+  background: var(--surface2);
+  border: none;
+  border-top: 2px solid var(--accent);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s;
+  margin-top: 4px;
+  letter-spacing: 0.5px;
+}
+
+.download-btn:hover { background: var(--border); }
+
+/* ── Responsive header ── */
+@media (max-width: 900px) {
+  .header-logos { gap: 8px; }
+  .header-logo  { height: 38px; }
+  .site-title   { font-size: 17px; }
+}
+
+@media (max-width: 600px) {
+  .header-logos { display: none; }
+  .header-center { justify-content: flex-start; }
+}
 
 /* ── Layout grid ── */
 .root {
@@ -146,9 +227,30 @@ body {
 .tab-btn.active { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 600; }
 
 /* ── Image panel ── */
-.image-panel { background: var(--surface2); border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+.image-panel {
+  background: var(--surface2);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
 .result-img  { width: 100%; max-height: 600px; object-fit: contain; display: block; }
-.download-btn { width: 100%; padding: 12px; text-align: center; background: var(--surface2); border: none; border-top: 1px solid var(--border); color: var(--accent); font-size: 13px; font-weight: 600; cursor: pointer; transition: background .15s; }
+.download-btn {
+  width: 100%;
+  padding: 12px;
+  text-align: center;
+  background: var(--surface2);
+  border: none;
+  border-top: 2px solid var(--accent);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s;
+  margin-top: 12px;
+  border-radius: 0 0 10px 10px;
+}
 .download-btn:hover { background: var(--border); }
 
 .download-all-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
@@ -168,4 +270,109 @@ body {
   .root { grid-template-columns: 1fr; grid-template-areas: "header" "body"; }
   .legend-sidebar { display: none; }
   .page-body { padding: 20px 16px; }
+}
+
+/* ── Sequential Steps ── */
+.steps-container {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.step-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  opacity: 0.4;
+  transition: all 0.3s ease;
+}
+
+.step-row.active {
+  opacity: 1;
+  border-color: var(--accent);
+  background: rgba(0, 229, 255, 0.06);
+}
+
+.step-row.done {
+  opacity: 0.75;
+  border-color: var(--accent2);
+  background: rgba(57, 255, 20, 0.04);
+}
+
+.step-icon {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.step-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--text-dim);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+.step-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--border);
+  display: inline-block;
+}
+
+.step-label {
+  font-size: 13px;
+  color: var(--text);
+  font-family: 'Space Mono', monospace;
+  letter-spacing: 0.3px;
+}
+
+.step-row.active .step-label { color: var(--accent); }
+.step-row.done  .step-label  { color: var(--accent2); }
+
+/* ── Footer ── */
+.footer {
+  border-top: 1px solid var(--border);
+  background: rgba(10, 14, 20, 0.9);
+  padding: 20px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.footer-heart {
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.heart { font-size: 14px; }
+
+.footer-powered {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.footer-brand {
+  color: var(--accent);
+  font-weight: 600;
+  font-family: 'Space Mono', monospace;
+}
+
+.footer-sub {
+  color: var(--accent2);
+  font-weight: 600;
+  font-family: 'Space Mono', monospace;
 }
