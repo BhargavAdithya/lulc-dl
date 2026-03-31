@@ -9,7 +9,7 @@ const app              = express();
 const PORT             = process.env.PORT             || 4000;
 const MODEL_SERVER_URL = process.env.MODEL_SERVER_URL || 'http://localhost:5000';
 
-app.options('*', cors());
+app.options('/*path', cors());
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'OPTIONS'],
