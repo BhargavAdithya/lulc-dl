@@ -2,51 +2,39 @@
 
 <div align="center">
 
-# 🛰️ LandCover AI
+<img src="https://cse.iittp.ac.in/assets/images/iittp-logo.png" height="70" alt="IIT Tirupati" />&nbsp;&nbsp;&nbsp;&nbsp;
+<img src="https://iittnif.com/images/logos/IITT_InIf_svg2-01.png" height="70" alt="IITT NIF" />&nbsp;&nbsp;&nbsp;&nbsp;
+<img src="https://d35xcwcl37xo08.cloudfront.net/current-affairs-wp-uploads/2025/03/national_mission_in_interdisciplinary_cyber_physical_systems_nm_icps-scaled.jpg" height="70" alt="NM-ICPS" />&nbsp;&nbsp;&nbsp;&nbsp;
+<img src="https://results.siddhartha.edu.in/SAHE-Logo-01-results.jpg" height="70" alt="Siddhartha" />
 
-### Sentinel-2 Satellite Image Land Use & Land Cover Classification
+<br/><br/>
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-black?style=for-the-badge&logo=vercel)](https://landcover-frontend.vercel.app)
-[![Model](https://img.shields.io/badge/Model-HuggingFace-orange?style=for-the-badge&logo=huggingface)](https://huggingface.co/bhargav37/lulc-dl-model)
-[![Backend](https://img.shields.io/badge/Backend-Render-46E3B7?style=for-the-badge&logo=render)](https://landcover-backend.onrender.com/health)
-[![Model Server](https://img.shields.io/badge/Model%20Server-HF%20Spaces-yellow?style=for-the-badge&logo=huggingface)](https://huggingface.co/spaces/bhargav37/landcover-model-server)
+# 🛰️ LandCover**AI**
 
-<br/>
+### Sentinel-2 Land Use & Land Cover Classification
 
-![Banner](https://img.shields.io/badge/Sentinel--2-13%20Band%20TIF-blue?style=flat-square) ![Classes](https://img.shields.io/badge/Classes-6%20Land%20Cover-green?style=flat-square) ![Architecture](https://img.shields.io/badge/Model-U--Net-red?style=flat-square)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-landcover--frontend.vercel.app-00e5ff?style=for-the-badge&logo=vercel)](https://landcover-frontend.vercel.app)
+[![Model](https://img.shields.io/badge/🤗%20Model-HuggingFace-ffcc00?style=for-the-badge)](https://huggingface.co/bhargav37/lulc-dl-model)
+[![Backend](https://img.shields.io/badge/Backend-Render-46e3b7?style=for-the-badge&logo=render)](https://landcover-backend.onrender.com)
+
+*Upload a Sentinel-2 satellite image and get instant AI-powered land cover segmentation.*
 
 </div>
 
 ---
 
-## 🌍 About
+## 🌍 What is LandCoverAI?
 
-**LandCoverAI** is a full-stack geospatial web application that classifies land use and land cover from **Sentinel-2 multispectral satellite imagery**. Users upload a 13-band `.TIF` image and receive AI-powered segmentation results across **6 land cover classes** — instantly, in the browser.
-
-The deep learning model behind this app is a **U-Net** trained on Sentinel-2 imagery. → [View Model & Training Details](https://huggingface.co/bhargav37/lulc-dl-model)
+LandCoverAI is a full-stack geospatial intelligence web application that accepts a **Sentinel-2 multispectral .TIF image** and classifies every pixel into one of 6 land cover categories using a deep learning U-Net model. The results are presented as three rich visual outputs — all downloadable.
 
 ---
 
-## ✨ Features
-
-- 📡 **Upload** any Sentinel-2 13-band `.TIF` satellite image
-- ⚙️ **Automatic preprocessing** — computes NDVI, NDWI, NDBI indices and stacks 16 input features
-- 🧠 **U-Net inference** via sliding window prediction
-- 🗺️ **Three visual outputs**, all downloadable:
-  - Segmentation Mask
-  - RGB + Classified Overlay
-  - Annotated image with class labels & confidence scores
-- 📊 **Class coverage statistics** with bar chart breakdown
-- 🔄 **Sequential loading steps** showing preprocessing → inference → output generation
-
----
-
-## 🏷️ Land Cover Classes
+## 🗺️ Land Cover Classes
 
 | Class | Colour |
 |---|---|
 | 🟫 Barren Land | Sandy Brown |
-| 🔴 Built-up Area | Crimson |
+| 🔴 Built-up Area | Crimson Red |
 | 🟡 Crop | Yellow |
 | 🟢 Forest | Green |
 | 🔵 Water | Blue |
@@ -54,69 +42,115 @@ The deep learning model behind this app is a **U-Net** trained on Sentinel-2 ima
 
 ---
 
-## 🏗️ Architecture
+## 📊 Output Visualisations
 
-```
-Browser (Next.js)
-      ↓  uploads .TIF
-Render (Express Backend)
-      ↓  forwards file
-HuggingFace Spaces (Flask Model Server)
-      ↓  preprocesses → predicts → plots
-      ↑  returns 3 PNG outputs + stats
+| Output | Description |
+|---|---|
+| **Segmentation Mask** | Colour-coded pixel-wise class map |
+| **RGB + Overlay** | Original satellite image blended with the classification |
+| **Annotated** | RGB image with class labels and confidence scores |
+
+All three outputs are downloadable as PNG files directly from the UI.
+
+---
+
+## 🧠 Deep Learning Model
+
+The model is a **U-Net** architecture trained on Sentinel-2 imagery. It takes a **16-channel input** — the original 13 Sentinel-2 bands plus three computed spectral indices:
+
+- **NDVI** — Normalised Difference Vegetation Index
+- **NDWI** — Normalised Difference Water Index
+- **NDBI** — Normalised Difference Built-up Index
+
+A **sliding window inference** strategy is used to handle large images efficiently.
+
+> 📖 Full model details, training data, and evaluation metrics → **[View Model on HuggingFace](https://huggingface.co/bhargav37/lulc-dl-model)**
+
+---
+
+## 🏗️ Architecture
+```mermaid
+flowchart TD
+    A[👤 User Browser] -->|Upload .TIF file| B
+
+    subgraph Vercel
+        B[🌐 Next.js Frontend]
+    end
+
+    B -->|POST /api/predict| C
+
+    subgraph Render
+        C[⚙️ Node.js + Express Backend]
+    end
+
+    C -->|Forward .TIF file| D
+
+    subgraph HuggingFace Spaces
+        D[🧪 Flask Model Server]
+        D --> E[🔬 Preprocess Bands\nNDVI · NDWI · NDBI]
+        E --> F[🧠 U-Net Inference\nSliding Window]
+        F --> G[🎨 Generate Outputs\nMask · Overlay · Annotated]
+    end
+
+    subgraph HuggingFace Hub
+        H[📦 landcover_unet_model.h5]
+    end
+
+    H -->|Load on startup| D
+    G -->|JSON + Base64 images| C
+    C -->|Forward response| B
+    B -->|Display Results + Stats| A
 ```
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Layer | Technology |
-|---|---|
-| **Frontend** | Next.js 14, TypeScript, CSS |
-| **Backend** | Node.js, Express.js |
-| **Model Server** | Python, Flask, TensorFlow, Keras |
-| **Preprocessing** | Rasterio, NumPy, SciPy |
-| **Visualisation** | Matplotlib |
-| **Model Storage** | HuggingFace Hub |
-| **Frontend Deploy** | Vercel |
-| **Backend Deploy** | Render |
-| **Model Server Deploy** | HuggingFace Spaces (Docker) |
-
----
-
-## 🚀 Deployment
-
-| Service | Platform | URL |
+| Layer | Technology | Hosted On |
 |---|---|---|
-| Frontend | Vercel | [landcover-frontend.vercel.app](https://landcover-frontend.vercel.app) |
-| Backend API | Render | [landcover-backend.onrender.com](https://landcover-backend.onrender.com/health) |
-| Model Server | HF Spaces | [bhargav37/landcover-model-server](https://huggingface.co/spaces/bhargav37/landcover-model-server) |
-| DL Model | HF Hub | [bhargav37/lulc-dl-model](https://huggingface.co/bhargav37/lulc-dl-model) |
-
-> ⚠️ **Note:** The backend and model server run on free tiers and may take **30–60 seconds** to wake up after inactivity. Please be patient on the first request.
+| **Frontend** | Next.js 14 · TypeScript · CSS | Vercel |
+| **Backend** | Node.js · Express.js · Multer | Render |
+| **Model Server** | Python · Flask · TensorFlow · Rasterio | HuggingFace Spaces |
+| **Model Storage** | HuggingFace Hub (.h5) | HuggingFace |
 
 ---
 
-## 🤝 Acknowledgements
+## 📁 Project Structure
+
+```
+LULC-DL/
+├── frontend/          # Next.js + TypeScript UI
+├── backend/           # Node.js + Express API gateway
+└── model-server/      # Python + Flask inference server
+```
+
+---
+
+## 🔗 Deployment Links
+
+| Service | URL |
+|---|---|
+| 🌐 Frontend | [landcover-frontend.vercel.app](https://landcover-frontend.vercel.app) |
+| ⚙️ Backend | [landcover-backend.onrender.com](https://landcover-backend.onrender.com) |
+| 🧠 Model Server | [bhargav37-landcover-model-server.hf.space](https://bhargav37-landcover-model-server.hf.space) |
+| 🤗 Model | [huggingface.co/bhargav37/lulc-dl-model](https://huggingface.co/bhargav37/lulc-dl-model) |
+
+---
+
+## 🏛️ Developed Under
+
+This project was developed at **IIT Tirupati** under the **STAR-PNT Labs**, supported by **NM-ICPS** and in association with **Geointell Labs**, as part of research in geospatial intelligence and remote sensing.
+
+---
 
 <div align="center">
 
-Built under the guidance and support of:
+Made with ❤️ for geospatial analysis
 
-**IIT Tirupati** · **IITT NIF** · **NM-ICPS** · **Siddhartha Academy of Higher Education**
+**Powered by Geointell Labs · STAR-PNT Labs**
 
 <br/>
 
-*Made with ❤️ for geospatial analysis*
-
-*Powered by **Geointell Labs** · **STAR-PNT Labs***
-
-</div>
-
----
-
-<div align="center">
-
-[⬆️ Back to Top](#top)
+[⬆ Back to Top](#top)
 
 </div>
