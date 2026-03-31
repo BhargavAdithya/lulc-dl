@@ -9,7 +9,23 @@ const app              = express();
 const PORT             = process.env.PORT             || 4000;
 const MODEL_SERVER_URL = process.env.MODEL_SERVER_URL || 'http://localhost:5000';
 
-app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:3000' }));
+app.use(cors({
+  origin: function (origin, callback) {
+    const allowed = [
+      'http://localhost:3000',
+      'https://landcover-frontend.vercel.app',
+      process.env.FRONTEND_URL,
+    ].filter(Boolean);
+
+    if (!origin || allowed.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type'],
+}));
 
 const upload = multer({
   storage: multer.memoryStorage(),
