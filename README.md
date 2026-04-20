@@ -2,13 +2,6 @@
 
 <div align="center">
 
-<img src="https://cse.iittp.ac.in/assets/images/iittp-logo.png" height="70" alt="IIT Tirupati" />&nbsp;&nbsp;&nbsp;&nbsp;
-<img src="https://iittnif.com/images/logos/IITT_InIf_svg2-01.png" height="70" alt="IITT NIF" />&nbsp;&nbsp;&nbsp;&nbsp;
-<img src="https://d35xcwcl37xo08.cloudfront.net/current-affairs-wp-uploads/2025/03/national_mission_in_interdisciplinary_cyber_physical_systems_nm_icps-scaled.jpg" height="70" alt="NM-ICPS" />&nbsp;&nbsp;&nbsp;&nbsp;
-<img src="https://results.siddhartha.edu.in/SAHE-Logo-01-results.jpg" height="70" alt="Siddhartha" />
-
-<br/><br/>
-
 # 🛰️ LandCover**AI**
 
 ### Sentinel-2 Land Use & Land Cover Classification
