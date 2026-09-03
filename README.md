@@ -130,18 +130,6 @@ LULC-DL/
 
 ---
 
-## 🏛️ Developed Under
-
-This project was developed at **IIT Tirupati** under the **STAR-PNT Labs**, supported by **NM-ICPS** and in association with **Geointell Labs**, as part of research in geospatial intelligence and remote sensing.
-
----
-
-<div align="center">
-
-Made with ❤️ for geospatial analysis
-
-**Powered by Geointell Labs · STAR-PNT Labs**
-
 <br/>
 
 [⬆ Back to Top](#top)
